@@ -8,9 +8,10 @@ import { signOut } from '../../features/auth/services/authService';
 import toaster from '../../services/toasterService';
 import { getEmpById } from '../../features/profile/services/EmpService';
 import { getEmpId, getNameProfileIcon } from '../../utils/function';
-
+import Popup from '../../components/Popup/Popup';
 const Header = ({ onMobileMenuToggle, empData }) => {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [openLogoutPopup, setOpenLogoutPopup] = useState(false);
   const { logout } = useAuth();
   const { navigate } = useRouteInformation();
 
@@ -158,8 +159,8 @@ const Header = ({ onMobileMenuToggle, empData }) => {
 
                 <div className="border-t" style={{ borderColor: 'var(--border-light)' }}>
                   <button
-                    onClick={handleLogout}
                     className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center space-x-2"
+                    onClick={() => setOpenLogoutPopup(true)}
                   >
                     <Icon
                       icon="mdi:logout"
@@ -173,6 +174,33 @@ const Header = ({ onMobileMenuToggle, empData }) => {
             )}
           </div>
         </div>
+        <Popup
+          open={openLogoutPopup}
+          header="Confirm Logout"
+          onClose={() => setOpenLogoutPopup(false)}
+          footer={
+            <>
+              <button
+                className="px-4 py-2 border rounded"
+                onClick={() => setOpenLogoutPopup(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded"
+                onClick={async () => {
+                  setOpenLogoutPopup(false);
+                  await handleLogout();
+                }}
+              >
+                Logout
+              </button>
+            </>
+          }
+        >
+          Are you sure you want to logout?
+        </Popup>
       </div>
     </header>
   );
