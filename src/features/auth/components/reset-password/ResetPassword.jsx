@@ -7,8 +7,6 @@ import { Icon } from '@iconify/react';
 import { resetPasswordApi } from "../../services/authService";
 import { useNavigate } from 'react-router-dom';
 import toaster from '../../../../services/toasterService';
-
-
 const resetSchema = yup.object().shape({
     newPassword: yup
         .string()
@@ -20,7 +18,6 @@ const resetSchema = yup.object().shape({
         .required('Confirm Password is required')
         .oneOf([yup.ref('newPassword')], 'Passwords must match'),
 });
-
 
 const ResetPassword = ({ token }) => {
     console.log("TOKEN:", token);
@@ -117,7 +114,7 @@ const ResetPassword = ({ token }) => {
                     type="password"
                     className='mb-4'
                     value={formData.newPassword}
-                    onChange={(value) => handleChange('newPassword', value)}
+                    onChange={(e) => handleChange('newPassword', e.target.value)}
                     error={errors.newPassword}
                     showPasswordToggle={true}
                 />
@@ -127,7 +124,7 @@ const ResetPassword = ({ token }) => {
                     label="Confirm Password"
                     type="password"
                     value={formData.confirmPassword}
-                    onChange={(value) => handleChange('confirmPassword', value)}
+                    onChange={(e) => handleChange('confirmPassword', e.target.value)}
                     error={errors.confirmPassword}
                     showPasswordToggle={true}
                 />
@@ -136,14 +133,12 @@ const ResetPassword = ({ token }) => {
             {errors.submit && (
                 <p className="text-red-500 text-sm">{errors.submit}</p>
             )}
-
             <Button
                 type="submit"
                 variant="primary"
                 className="login-submit-button w-full"
                 onClick={handleSubmit}
             // disabled={!isFormValid}
-
             >
                 Submit
             </Button>

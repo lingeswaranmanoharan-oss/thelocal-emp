@@ -7,6 +7,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import App from '../App';
 import Employee from '../pages/employee/employee';
 import EmployeeProfile from '../pages/profile/employee-profile/EmployeeProfile';
+import { ResetPasswordPage } from '../pages/auth/ResetPasswordPage';
 
 export const router = createBrowserRouter([
   {
@@ -27,6 +28,12 @@ export const router = createBrowserRouter([
       <PublicRoute>
         <ForgotPasswordPage />
       </PublicRoute>
+    ),
+  },
+  {
+    path: '/reset',
+    element: (
+      <ResetPasswordPage />
     ),
   },
   {
