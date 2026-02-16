@@ -1,7 +1,18 @@
 import axios from 'axios';
 import { config } from '../config/config';
-import StorageService from './storageService';
 
+let inMemoryToken = null;
+let tokenUpdateCallback = null;
+
+export const setAccessToken = (token) => {
+  inMemoryToken = token;
+};
+
+export const getAccessToken = () => inMemoryToken;
+
+export const setTokenUpdateCallback = (responseCallback) => {
+  tokenUpdateCallback = responseCallback;
+};
 
 // Create an Axios instance
 const http = axios.create({
@@ -10,12 +21,12 @@ const http = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true
 });
 
 
 let isRefreshing = false;
 let refreshSubscribers = [];
-
 
 const onRrefreshed = (token) => {
   refreshSubscribers.forEach((callback) => callback(token));
@@ -25,9 +36,8 @@ const onRrefreshed = (token) => {
 
 http.interceptors.request.use(
   (config) => {
-      const token = StorageService.get('hrmToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (inMemoryToken) {
+      config.headers.Authorization = `Bearer ${inMemoryToken}`;
     }
     return config;
   },
@@ -39,66 +49,52 @@ http.interceptors.response.use(
   (response) => {
     return response.data;
   },
-//   async (error) => {
-//     const originalRequest = error.config;
-//     if (error.response?.status === 403 && !originalRequest._retry) {
-//       if (isRefreshing) {
-//         return new Promise((resolve) => {
-//           refreshSubscribers.push((newToken: string) => {
-//             originalRequest.headers.Authorization = `Bearer ${newToken}`;
-//             resolve(http(originalRequest));
-//           });
-//         });
-//       }
+  async (error) => {
+    const originalRequest = error.config;
+    const authEndpoints = ['/auth/login', '/auth/refresh'];
+    const isAuthEndpoint = authEndpoints.some(endpoint => originalRequest?.url?.includes(endpoint));
 
+    if (isAuthEndpoint) {
+      return Promise.reject(error);
+    }
 
-//       originalRequest._retry = true;
-//       isRefreshing = true;
+    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          refreshSubscribers.push((newToken) => {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            resolve(http(originalRequest));
+          });
+        });
+      }
 
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-//       try {
-//         const token = localStorage.getItem('authToken');
-//         if (token) {
-//           const { refresh_token }: any = JSON.parse(token);
-//           const { client_id, client_secret } = config.keyCloakConfig;
-
-
-//           const payload = new URLSearchParams({
-//             client_id,
-//             client_secret,
-//             refresh_token,
-//             grant_type: 'refresh_token'
-//           });
-
-
-//           const { data: newAccessToken }: any = await axios.post(
-//             config.apiBaseUrl + '/aaa-service/token',
-//             payload,
-//             { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-//           );
-
-
-//           localStorage.setItem("authToken", JSON.stringify(newAccessToken));
-
-
-//           isRefreshing = false;
-//           onRrefreshed(newAccessToken.access_token);
-
-
-//           originalRequest.headers.Authorization = `Bearer ${newAccessToken.access_token}`;
-//           return http(originalRequest);
-//         }
-//       } catch (error) {
-//         isRefreshing = false;
-//         localStorage.removeItem("authToken");
-//         window.location.href = `/login?redirect=${window.location.pathname+window.location.search}`;
-//         return Promise.reject(error);
-//       }
-//     }
-
-
-//     return Promise.reject(error.response || error.message);
-//   }
+      try {
+        const response = await axios.post(
+          config.apiBaseUrl + '/api-hrm/auth/refresh',
+          {},
+          { withCredentials: true }
+        );
+        const { accessToken } = response.data.data;
+        isRefreshing = false;
+        if (accessToken) {
+          inMemoryToken = accessToken;
+          if (tokenUpdateCallback) tokenUpdateCallback(accessToken);
+          onRrefreshed(accessToken);
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          return http(originalRequest);
+        }
+      } catch (refreshError) {
+        isRefreshing = false;
+        inMemoryToken = null;
+        window.location.href = `/login?redirect=${window.location.pathname + window.location.search}`;
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error.response || error.message);
+  }
 );
 
 
@@ -113,6 +109,3 @@ const HttpService = {
 
 
 export default HttpService;
-
-
-

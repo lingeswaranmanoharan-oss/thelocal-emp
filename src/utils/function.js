@@ -1,5 +1,4 @@
-import config from '../config/config';
-import StorageService from '../services/storageService';
+import { getAccessToken } from '../services/httpService';
 
 export const getClientStorage = () => {
   return JSON.parse(sessionStorage.getItem('loginCred'));
@@ -11,7 +10,7 @@ export const getAuthorization = (token) => {
 
 export const getAuthTokenDetails = (authToken) => {
   try {
-    const token = authToken || StorageService.get(config.hrmToken);
+    const token = authToken || getAccessToken();
 
     if (!token) return null;
 
