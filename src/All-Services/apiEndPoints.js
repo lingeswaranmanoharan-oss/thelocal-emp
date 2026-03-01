@@ -1,7 +1,10 @@
-const baseUrl = import.meta.env.APP_API_URL;
+import { handleQueryParams } from "../utils/function";
 
 const apiEndPoints = {
-  getEmployeData: (employeeId) => `${baseUrl}/api-hrm/get/employee/details/id/${employeeId}`,
+  getEmployeData: (employeeId) => `/api-hrm/get/employee/details/id/${employeeId}`,
+  getEmployeeSalary: (employeeId) => `/api-hrm/v1/salary/employee/${employeeId}`,
+  addEmployeeSalary: `/v1/salary`,
+  getHolidays:(companyId,query)=>`/api-hrm/v1/calendars/companyId/${companyId}?${handleQueryParams(query)}`
 };
 
 export default apiEndPoints;

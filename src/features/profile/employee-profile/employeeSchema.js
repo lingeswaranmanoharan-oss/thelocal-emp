@@ -4,8 +4,16 @@ import * as yup from 'yup';
 //    STEP 1 – PERSONAL
 
 const personalSchema = yup.object({
-  firstName: yup.string().required('First Name name is required'),
-  lastName: yup.string().required('Last Name name is required'),
+  firstName: yup
+    .string()
+    .required('First Name is required')
+    .max(50, 'First Name must be at most 50 characters'),
+
+  lastName: yup
+    .string()
+    .required('Last Name is required')
+    .max(50, 'Last Name must be at most 50 characters'),
+
   dob: yup
     .string()
     .required('Date of birth is required')
@@ -25,6 +33,16 @@ const personalSchema = yup.object({
     .required('Mobile number is required')
     .matches(/^[6-9]\d{9}$/, 'Mobile number must be 10 digits and start with 6-9'),
   profileUrl: yup.string().required('Upload Profile image'),
+  religion: yup.string().required('Religion is required'),
+
+  emergencyContactNum: yup
+    .string()
+    .matches(/^[0-9]{10}$/, 'Emergency contact number must be 10 digits')
+    .required('Emergency contact number is required'),
+  emergencyContactPerson: yup
+    .string()
+    .required('Emergency contact is required')
+    .max(50, 'Emergency contact must be at most 50 characters'),
 });
 
 //    STEP 2 – ADDRESS
@@ -60,7 +78,7 @@ const addressSchema = yup.object({
         .trim()
         .required('Door / House No. is required')
         .matches(/^[a-zA-Z0-9\s\/,-]+$/, 'Enter a valid door / house number')
-        .max(20, 'Door / House No. must be at most 20 characters'),
+        .max(50, 'Door / House No. must be at most 50 characters'),
       landMark: yup
         .string()
         .trim()
@@ -170,52 +188,81 @@ export const experienceSchema = yup.object({
 //    STEP 7 – DEPENDENCY & BANK
 
 const dependencyBankSchema = yup.object({
-  bankName: yup
-    .string()
-    .required('Bank name is required')
-    .min(3, 'Bank name must be at least 3 characters')
-    .max(100, 'Bank name cannot exceed 100 characters')
-    .trim('Bank name cannot be empty'),
+    bankName: yup
+      .string()
+      .required('Bank name is required')
+      .min(3, 'Bank name must be at least 3 characters')
+      .max(100, 'Bank name cannot exceed 100 characters')
+      .trim('Bank name cannot be empty'),
 
-  bankAccHolderName: yup
-    .string()
-    .required('Account holder name is required')
-    .min(3, 'Account holder name must be at least 3 characters')
-    .max(100, 'Account holder name cannot exceed 100 characters')
-    .trim('Account holder name cannot be empty'),
+    bankAccHolderName: yup
+      .string()
+      .required('Account holder name is required')
+      .min(3, 'Account holder name must be at least 3 characters')
+      .max(100, 'Account holder name cannot exceed 100 characters')
+      .trim('Account holder name cannot be empty'),
 
-  bankBranch: yup
-    .string()
-    .required('Bank branch is required')
-    .min(3, 'Bank branch must be at least 3 characters')
-    .max(100, 'Bank branch cannot exceed 100 characters')
-    .trim('Bank branch cannot be empty'),
-  bankAccNum: yup
-    .string()
-    .required('Account number is required')
-    .matches(/^[0-9]{9,18}$/, 'Account number must be 9 to 18 digits'),
-  ifscCode: yup
-    .string()
-    .required('IFSC code is required')
-    .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC code format (e.g., SBIN0001234)'),
-  uanNumber: yup
-    .string()
-    .nullable()
-    .notRequired()
-    .matches(/^[0-9]{12}$/, {
-      message: 'UAN must be 12 digits',
-      excludeEmptyString: true,
-    }),
+    bankBranch: yup
+      .string()
+      .required('Bank branch is required')
+      .min(3, 'Bank branch must be at least 3 characters')
+      .max(100, 'Bank branch cannot exceed 100 characters')
+      .trim('Bank branch cannot be empty'),
+    bankAccNum: yup
+      .string()
+      .required('Account number is required')
+      .matches(/^[0-9]{9,18}$/, 'Account number must be 9 to 18 digits'),
+    ifscCode: yup
+      .string()
+      .required('IFSC code is required')
+      .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC code format (e.g., SBIN0001234)'),
+    uanNumber: yup
+      .string()
+      .nullable()
+      .notRequired()
+      .matches(/^[0-9]{12}$/, {
+        message: 'UAN must be 12 digits',
+        excludeEmptyString: true,
+      }),
 
-  esiNumber: yup
-    .string()
-    .nullable()
-    .notRequired()
-    .matches(/^[0-9]{10}$/, {
-      message: 'ESI number must be 10 digits',
-      excludeEmptyString: true,
-    }),
-});
+    esiNumber: yup
+      .string()
+      .nullable()
+      .notRequired()
+      .matches(/^[0-9]{10}$/, {
+        message: 'ESI number must be 10 digits',
+        excludeEmptyString: true,
+      }),
+    pfNumber: yup
+      .string()
+      .nullable()
+      .notRequired()
+      .matches(/^[0-9]{10}$/, {
+        message: 'PF number must be 10 digits',
+        excludeEmptyString: true,
+      }),
+  })
+  .test('esi-or-pf', function (values) {
+    const { esiNumber, pfNumber } = values || {};
+
+    const hasEsi = !!esiNumber?.trim();
+    const hasPf = !!pfNumber?.trim();
+
+    // ✅ valid if one exists
+    if (hasEsi || hasPf) return true;
+
+    // ❌ create multiple errors
+    return new yup.ValidationError([
+      this.createError({
+        path: 'esiNumber',
+        message: 'Either ESI or PF number is required',
+      }),
+      this.createError({
+        path: 'pfNumber',
+        message: 'Either ESI or PF number is required',
+      }),
+    ]);
+  });
 // const dependencyBankSchema = yup.object({
 //   bankName: yup.string().required('Bank name is required'),
 
@@ -327,7 +374,7 @@ export const stepSchemas = [
   addressSchema,
   familySchema,
   academicSchema,
-  employmentSchema,
+  // employmentSchema,
   experienceSchema,
   dependencyBankSchema,
   documentSchema,

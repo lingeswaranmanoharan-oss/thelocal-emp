@@ -52,11 +52,14 @@ const Login = () => {
           setToken(accessToken);
           navigate('/My-details');
           toaster.success(sigInResponse.message);
+          setIsLoading(false);
         } else {
+          setIsLoading(false);
           toaster.warning('You do not have permission to access this application.');
         }
       }
     } catch (error) {
+      setIsLoading(false);
       if (error.response) {
         const { message } = error.response.data?.error || {};
         toaster.error(message || 'Login failed');
@@ -73,6 +76,7 @@ const Login = () => {
       await loginSchema.validate(formData, { abortEarly: false });
       submitLoginData();
     } catch (error) {
+      setIsLoading(false);
       if (error.inner) {
         const validationErrors = {};
         error.inner.forEach((err) => {
@@ -83,7 +87,6 @@ const Login = () => {
         setErrors(validationErrors);
       }
     } finally {
-      setIsLoading(false);
     }
   };
 

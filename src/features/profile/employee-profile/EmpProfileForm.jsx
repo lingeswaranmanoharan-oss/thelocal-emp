@@ -122,6 +122,17 @@ export default function EmpProfileForm() {
     },
   });
 
+  // ✅ cross-field revalidation for ESI & PF
+  const esiNumber = watch('esiNumber');
+  const pfNumber = watch('pfNumber');
+
+  useEffect(() => {
+    // only run when DependencyBank step is active
+    if (step === 5) {
+      trigger(['esiNumber', 'pfNumber']);
+    }
+  }, [esiNumber, pfNumber, step, trigger]);
+
   const steps = [
     <StepPersonal
       register={register}
@@ -153,12 +164,12 @@ export default function EmpProfileForm() {
       getValues={getValues}
       setValue={setValue}
     />,
-    <StepEmployment
-      register={register}
-      errors={errors}
-      setValue={setValue}
-      getValues={getValues}
-    />,
+    // <StepEmployment
+    //   register={register}
+    //   errors={errors}
+    //   setValue={setValue}
+    //   getValues={getValues}
+    // />,
     <StepExperience
       register={register}
       control={control}
@@ -167,7 +178,13 @@ export default function EmpProfileForm() {
       getValues={getValues}
       watch={watch}
     />,
-    <StepDependencyBank register={register} control={control} errors={errors} />,
+    <StepDependencyBank
+      register={register}
+      getValues={getValues}
+      setValue={setValue}
+      control={control}
+      errors={errors}
+    />,
     <StepDocumentDetails
       register={register}
       control={control}
@@ -255,6 +272,7 @@ export default function EmpProfileForm() {
     );
   };
   const handleNext = async () => {
+    console.log('errors', errors);
     const valid = await trigger();
     if (!valid) return;
     // const stepData = getStepData(step);
@@ -283,9 +301,12 @@ export default function EmpProfileForm() {
     setValue('bloodGroup', data.bloodGroup ?? '');
     setValue('nationality', data.nationality || 'India');
     setValue('personalEmail', data.personalEmail ?? '');
+    setValue('religion', data.religion || '');
     setValue('contactNumber', data.contactNumber ?? '');
     setValue('aadhaarNumber', data.aadharNumber ?? '');
     setValue('profileUrl', data.profileUrl || '');
+    setValue('emergencyContactPerson', data.emergencyContactPerson || '');
+    setValue('emergencyContactNum', data.emergencyContactNum || '');
 
     // STEP 2 – ADDRESS
     const apiAddresses = data.addresses || [];
@@ -429,7 +450,6 @@ export default function EmpProfileForm() {
         setIsLoading(false);
       }
     };
-
     fetchCompanyData();
   }, [navigate]);
 

@@ -15,15 +15,14 @@ export const setTokenUpdateCallback = (responseCallback) => {
 };
 
 // Create an Axios instance
-const http = axios.create({
+export const http = axios.create({
   baseURL: config.apiBaseUrl,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true
+  withCredentials: true,
 });
-
 
 let isRefreshing = false;
 let refreshSubscribers = [];
@@ -33,7 +32,6 @@ const onRrefreshed = (token) => {
   refreshSubscribers = [];
 };
 
-
 http.interceptors.request.use(
   (config) => {
     if (inMemoryToken) {
@@ -41,9 +39,8 @@ http.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
-
 
 http.interceptors.response.use(
   (response) => {
@@ -52,13 +49,18 @@ http.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const authEndpoints = ['/auth/login', '/auth/refresh'];
-    const isAuthEndpoint = authEndpoints.some(endpoint => originalRequest?.url?.includes(endpoint));
+    const isAuthEndpoint = authEndpoints.some((endpoint) =>
+      originalRequest?.url?.includes(endpoint),
+    );
 
     if (isAuthEndpoint) {
       return Promise.reject(error);
     }
 
-    if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
+    if (
+      (error.response?.status === 401 || error.response?.status === 403) &&
+      !originalRequest._retry
+    ) {
       if (isRefreshing) {
         return new Promise((resolve) => {
           refreshSubscribers.push((newToken) => {
@@ -75,7 +77,7 @@ http.interceptors.response.use(
         const response = await axios.post(
           config.apiBaseUrl + '/api-hrm/auth/refresh',
           {},
-          { withCredentials: true }
+          { withCredentials: true },
         );
         const { accessToken } = response.data.data;
         isRefreshing = false;
@@ -94,9 +96,8 @@ http.interceptors.response.use(
       }
     }
     return Promise.reject(error.response || error.message);
-  }
+  },
 );
-
 
 // Add utility methods for HTTP operations
 const HttpService = {
@@ -106,6 +107,5 @@ const HttpService = {
   patch: (url, data, config) => http.patch(url, data, config),
   delete: (url, config) => http.delete(url, config),
 };
-
 
 export default HttpService;

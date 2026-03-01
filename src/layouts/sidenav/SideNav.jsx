@@ -9,6 +9,12 @@ const menuConfig = [
     icon: 'streamline-ultimate:human-resources-search-employees-bold',
     children: [{ label: 'My Details', path: '/My-details' }],
   },
+  {
+    key:'holidays',
+    label:"Holidays",
+    icon:"flowbite:calendar-week-solid",
+    children:[{label:"Holiday List",path:"/holidays/holiday-list"}]
+  }
 ];
 
 const SideNav = ({ isMobileMenuOpen, setIsMobileMenuOpen, empData }) => {

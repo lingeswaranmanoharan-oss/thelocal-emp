@@ -3,7 +3,7 @@ export const EMPLOYEE_STEPS = [
   'Address',
   'Family Details',
   'Academic',
-  'Employment',
+  // 'Employment',
   'Experience',
   // 'Dependency & Bank',
   'Bank Details',

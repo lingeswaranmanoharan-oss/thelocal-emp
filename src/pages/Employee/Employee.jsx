@@ -8,6 +8,7 @@ import { getEmpId } from '../../utils/function';
 import toaster from '../../services/toasterService';
 import ViewEmployeeDetailsData from './ViewEmployeeDetailsData/ViewEmployeeDetailsData';
 import { Icon } from '@iconify/react';
+import ProfileDetails from '../../features/profile/components/ProfileDetails/ProfileDetails';
 
 const Employee = () => {
   const [empData, setEmpData] = useState(null);
@@ -34,20 +35,18 @@ const Employee = () => {
 
     fetchCompanyData();
   }, []);
-  console.log(empData);
+
   const fullName = empData ? `${empData.firstName ?? ''} ${empData.lastName ?? ''}` : '';
 
   return (
-    <div className="bg-white p-4">
-      {/* <div className="text-lg font-semibold mb-2">Welcome {fullName}</div> */}
+    <div className="bg-white p-4 border">
       <div className="flex items-center gap-2 text-lg font-semibold mb-2">
         <Icon icon="mdi:hand-wave-outline" className="text-orange-500 text-xl" />
         <span>
           Welcome {fullName} {empData?.employeeId && `(${empData?.employeeId})`}
         </span>
       </div>
-
-      <ViewEmployeeDetailsData apiState={empData} />
+      <ProfileDetails empData={empData} />
     </div>
   );
 };

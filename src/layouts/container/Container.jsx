@@ -5,8 +5,9 @@ import { useState, useEffect } from 'react';
 import config from '../../config/config';
 import axios from 'axios';
 import { getEmpById } from '../../features/profile/services/EmpService';
-import { getEmpId } from '../../utils/function';
+import { getAuthTokenDetails, getEmpId } from '../../utils/function';
 import toaster from '../../services/toasterService';
+import ChangePasswordPage from '../../pages/auth/ChangePasswordPage';
 
 export const Container = () => {
   const [currentPage, setCurrentPage] = useState('dashboard');
@@ -70,6 +71,11 @@ export const Container = () => {
 
     fetchCompanyData();
   }, []);
+
+  if (getAuthTokenDetails()?.firstLogin === false) {
+    return <ChangePasswordPage />;
+  }
+
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="flex h-screen overflow-hidden">

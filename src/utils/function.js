@@ -1,4 +1,5 @@
 import { getAccessToken } from '../services/httpService';
+import { apiStatusConstants } from './enum';
 
 export const getClientStorage = () => {
   return JSON.parse(sessionStorage.getItem('loginCred'));
@@ -58,4 +59,42 @@ export const getNameProfileIcon = (firstName = '', lastName = '') => {
   const last = lastName?.charAt(0)?.toUpperCase() || '';
 
   return first + last; // 🔥 AD
+};
+
+export const initialState = {
+  apiStatus: apiStatusConstants.initial,
+};
+
+export const apiReducer = (state = initialState, action) => {
+  switch (action.apiStatus) {
+    case apiStatusConstants.success:
+      return {
+        apiStatus: apiStatusConstants.success,
+        data: action.payload,
+      };
+    case apiStatusConstants.failure:
+      return {
+        ...state,
+        apiStatus: apiStatusConstants.failure,
+        data: action.payload,
+      };
+    case apiStatusConstants.inProgress:
+      return {
+        ...state,
+        apiStatus: apiStatusConstants.inProgress,
+      };
+    case apiStatusConstants.initial:
+      return {
+        apiStatus: apiStatusConstants.initial,
+      };
+    // direct update within modal(api-response)
+    default:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          data: { ...state.data.data, ...action },
+        },
+      };
+  }
 };

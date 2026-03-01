@@ -79,7 +79,7 @@ export const StepPersonal = ({ register, errors, setValue, getValues, watch, tri
                 key={field.name}
                 label={field.label}
                 items={field.options}
-                selectedValue={getValues(field.name)}
+                selectedValue={watch(field.name)}
                 onSelect={(value) =>
                   setValue(field.name, value, {
                     shouldValidate: true,
@@ -94,7 +94,9 @@ export const StepPersonal = ({ register, errors, setValue, getValues, watch, tri
 
           return null;
         })}
-      </div>
+      </div>{' '}
+      <br />
+      <StepEmployment getValues={getValues} watch={watch} register={register} errors={errors} />
     </>
   );
 };
@@ -401,8 +403,6 @@ export const StepEmployment = ({ register, errors, setValue, getValues }) => {
 
   return (
     <>
-      <h2 className={sectionTitle}>Employment Details</h2>
-
       <div className={gridTwo}>
         {employmentFields.map((field) => {
           if (field.type === 'input') {
@@ -652,18 +652,37 @@ export const StepDependencyBank = ({ control, register, errors, setValue, getVal
     <>
       <h2 className={`${sectionTitle} mt-6`}>Bank Details</h2>
       <div className={gridTwo}>
-        {bankFields.slice(0, bankFields.length - 2).map((field) => (
-          <Input
-            key={field.name}
-            label={field.label}
-            {...register(`${field.name}`)}
-            error={errors?.[field.name]?.message}
-          />
-        ))}
+        {bankFields.slice(0, bankFields.length - 3).map((field) => {
+          if (field.type === 'file') {
+            return (
+              <FileUpload
+                key={field.name}
+                label={field.label}
+                value={getValues("bankPassbookUrl")}
+                onChange={(val) =>
+                  setValue("bankPassbookUrl", val, {
+                    shouldValidate: true,
+                    shouldTouch: true,
+                  })
+                }
+                errormsg={errors.experiences?.[index]?.[field.name]?.message}
+              />
+              // </div>
+            );
+          }
+          return (
+            <Input
+              key={field.name}
+              label={field.label}
+              {...register(`${field.name}`)}
+              error={errors?.[field.name]?.message}
+            />
+          );
+        })}
       </div>
       <h2 className={`${sectionTitle} mt-6`}>Statutory Details</h2>{' '}
       <div className={gridTwo}>
-        {bankFields.slice(bankFields.length - 2, bankFields.length).map((field) => (
+        {bankFields.slice(bankFields.length - 3, bankFields.length).map((field) => (
           <Input
             key={field.name}
             label={field.label}
@@ -765,7 +784,7 @@ export const StepDocumentDetails = ({ control, register, errors, getValues, setV
               type="button"
               variant="outline"
               size="sm"
-              className={`col-span-2 w-fit `}
+              className={`col-span-2 w-fit h-fit `}
               onClick={() => remove(index)}
             >
               Remove Document

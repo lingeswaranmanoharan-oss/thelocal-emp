@@ -1,8 +1,8 @@
 const apiStatusConstants = {
-  initial: "INITIAL",
-  success: "SUCCESS",
-  failure: "FAILURE",
-  inProgress: "IN_PROGRESS",
+  initial: 'INITIAL',
+  success: 'SUCCESS',
+  failure: 'FAILURE',
+  inProgress: 'IN_PROGRESS',
 };
 
 const initialState = { apiStatus: apiStatusConstants.initial };

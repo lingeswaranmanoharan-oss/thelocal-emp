@@ -16,7 +16,7 @@ const tabs = [
   { id: 'addresses?', label: 'Address' },
   { id: 'passport?', label: 'Documents' },
   { id: 'education?', label: 'Education' },
-  { id: 'employment?', label: 'Employment' },
+  // { id: 'employment?', label: 'Employment' },
   { id: 'experience?', label: 'Experience' },
   { id: 'dependency?', label: 'Bank Details' },
 ];
@@ -131,7 +131,11 @@ const ViewEmployeeDetailsData = ({ apiState }) => {
             {renderDetailItem('Marital Status', apiState?.maritalStatus)}
             {renderDetailItem('Blood Group', apiState?.bloodGroup)}
             {renderDetailItem('Personal Email', apiState?.personalEmail)}
-            {renderDetailItem('Mobile Number', apiState?.contactNumber)}
+            {renderDetailItem('Mobile Number', apiState?.contactNumber)}{' '}
+            {renderDetailItem('Nationality', apiState?.nationality)}
+            {renderDetailItem('Religion', apiState?.religion)}
+            {renderDetailItem('Emergency Contact Name', apiState?.emergencyContactPerson)}
+            {renderDetailItem('Emergency Contact Number', apiState?.emergencyContactNum)}
           </div>
           <div style={{ display: 'flex', alignItems: 'start', width: '50%' }}>
             <img
@@ -306,9 +310,9 @@ const ViewEmployeeDetailsData = ({ apiState }) => {
       <SectionHeader
         title="Employment Details"
         profileUpdatedFlag={apiState?.profileUpdatedFlag}
-        onEdit={() => {
-          navigate('/Edit-emp');
-        }}
+        // onEdit={() => {
+        //   navigate('/Edit-emp');
+        // }}
       />
       <div className="details-grid">
         {renderDetailItem('Employment Type', apiState?.employmentTypeName)}
@@ -439,18 +443,23 @@ const ViewEmployeeDetailsData = ({ apiState }) => {
   const renderContent = () => {
     switch (activeTab) {
       case 0:
-        return renderPersonalDetails();
+        return (
+          <>
+            {renderPersonalDetails()}
+            {renderEmploymentDetails()}
+          </>
+        );
       case 1:
         return renderAddressDetails();
       case 2:
         return renderPassportDetails();
       case 3:
         return renderAcademicDetails();
+      // case 4:
+      // return renderEmploymentDetails();
       case 4:
-        return renderEmploymentDetails();
-      case 5:
         return renderExperienceDetails();
-      case 6:
+      case 5:
         return renderDependencyDetails();
       default:
         return null;

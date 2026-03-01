@@ -13,7 +13,7 @@ export const getNewToken = async () => {
 };
 
 export const signOut = async () => {
-  const response = await HttpService.post('/hrm/api-hrm/logout', {});
+  const response = await HttpService.post('/api-hrm/logout', {});
   return response.data;
 };
 
@@ -24,5 +24,9 @@ export const forgotPasswordApi = async (payload) => {
 
 export const resetPasswordApi = async (payload) => {
   const response = await HttpService.post('/auth/reset-password', payload);
+  return response;
+};
+export const changePassword = async (payload) => {
+  const response = await HttpService.post('/api-hrm/change-password', payload);
   return response;
 };

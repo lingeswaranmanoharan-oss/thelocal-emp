@@ -63,4 +63,3 @@ export const toaster = {
 };
 
 export default toaster;
-

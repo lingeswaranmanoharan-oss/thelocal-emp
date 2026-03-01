@@ -255,6 +255,23 @@ export const personalFieldsConfig = [
     ],
   },
   {
+    type: 'dropdown',
+    name: 'religion',
+    label: 'Religion',
+    options: [
+      { label: 'Hindu', value: 'HINDU' },
+      { label: 'Muslim', value: 'MUSLIM' },
+      { label: 'Christian', value: 'CHRISTIAN' },
+      { label: 'Sikh', value: 'SIKH' },
+      { label: 'Buddhist', value: 'BUDDHIST' },
+      { label: 'Jain', value: 'JAIN' },
+      { label: 'Parsi (Zoroastrian)', value: 'PARSI' },
+      { label: 'Jewish', value: 'JEWISH' },
+      { label: 'Other', value: 'OTHER' },
+      { label: 'Prefer Not to Say', value: 'NOT_DISCLOSED' },
+    ],
+  },
+  {
     type: 'input',
     name: 'personalEmail',
     label: 'Personal Email',
@@ -263,6 +280,16 @@ export const personalFieldsConfig = [
     type: 'input',
     name: 'contactNumber',
     label: 'Mobile Number',
+  },
+  {
+    type: 'input',
+    name: 'emergencyContactNum',
+    label: 'Emergency Contact Number',
+  },
+  {
+    type: 'input',
+    name: 'emergencyContactPerson',
+    label: 'Emergency Contact Name',
   },
 ];
 
@@ -427,8 +454,14 @@ export const bankFields = [
   { name: 'bankBranch', label: 'Bank Branch' },
   { name: 'bankAccNum', label: 'Account Number' },
   { name: 'ifscCode', label: 'IFSC ' },
+  {
+    name: 'bankPassbookUrl',
+    label: 'Bank Passbook',
+    type: 'file',
+  },
   { name: 'uanNumber', label: 'UAN Number' },
   { name: 'esiNumber', label: 'ESI Number' },
+  { name: 'pfNumber', label: 'PF Number' },
 ];
 
 export const documentDetails = [

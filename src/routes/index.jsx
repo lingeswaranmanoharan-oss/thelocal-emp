@@ -8,6 +8,7 @@ import App from '../App';
 import Employee from '../pages/employee/employee';
 import EmployeeProfile from '../pages/profile/employee-profile/EmployeeProfile';
 import { ResetPasswordPage } from '../pages/auth/ResetPasswordPage';
+import HolidaysPage from '../pages/holidays/HolidaysPage';
 
 export const router = createBrowserRouter([
   {
@@ -32,9 +33,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/reset',
-    element: (
-      <ResetPasswordPage />
-    ),
+    element: <ResetPasswordPage />,
   },
   {
     path: '/My-details',
@@ -56,4 +55,16 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path:"/holidays",
+    element:<ProtectedRoute/>,
+    children:[
+      {
+        path:"holiday-list",
+        element:<HolidaysPage/>
+      }
+    ]
+  }
 ]);
+
+

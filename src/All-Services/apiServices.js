@@ -1,3 +1,4 @@
+import { http } from '../services/httpService';
 import { apiStatusConstants } from '../utils/constants';
 import apiInstance from './apiInstance';
 
@@ -13,29 +14,21 @@ const getContentDisposition = (response) => {
 };
 
 const handleErrors = ({ response, apiDispatch, callBackFunction, responseType }) => {
-  if ([200, 201].includes(response.status)) {
-    if (response.data.success) {
-      callBackFunction && callBackFunction(response.data);
-      apiDispatch &&
-        apiDispatch({
-          apiStatus: apiStatusConstants.success,
-          payload: response.data,
-        });
-    } else {
-      apiDispatch &&
-        apiDispatch({
-          apiStatus: apiStatusConstants.failure,
-          payload: responseType === 'blob' ? getContentDisposition(response) : response.data,
-        });
-      callBackFunction &&
-        callBackFunction(responseType === 'blob' ? getContentDisposition(response) : response.data);
-    }
-  } else {
+  if (response.success === true) {
     callBackFunction && callBackFunction(response.data);
-    apiDispatch({
-      apiStatus: apiStatusConstants.failure,
-      payload: response.data,
-    });
+    apiDispatch &&
+      apiDispatch({
+        apiStatus: apiStatusConstants.success,
+        payload: response,
+      });
+  } else {
+    apiDispatch &&
+      apiDispatch({
+        apiStatus: apiStatusConstants.failure,
+        payload: responseType === 'blob' ? getContentDisposition(response) : response,
+      });
+    callBackFunction &&
+      callBackFunction(responseType === 'blob' ? getContentDisposition(response) : response);
   }
 };
 
@@ -55,7 +48,7 @@ const apiServices = {
       if (controller) {
         options.signal = controller?.signal;
       }
-      const response = await apiInstance.get(apiUrl, options);
+      const response = await http.get(apiUrl, options);
       handleErrors({ response, apiDispatch, callBackFunction });
     } catch (e) {
       if (controller && (axios.isCancel?.(e) || e.name === 'CanceledError')) {
@@ -86,15 +79,13 @@ const apiServices = {
           id: '12121',
           'Content-Type':
             type === 'file' ? '/' : type === 'm' ? 'multipart/form-data' : 'application/json',
-          'ACIN-API-KEY': 'ACIN-SDGESDFYRGFSDF',
-          // Authorization: getAuthorization(),
         },
         responseType: responseType || 'json',
       };
       if (controller) {
         options.signal = controller?.signal;
       }
-      const response = await apiInstance.post(apiUrl, body, options);
+      const response = await http.post(apiUrl, body, options);
       handleErrors({ response, apiDispatch, callBackFunction, responseType });
     } catch (e) {
       const errorData = e.response?.data || {
@@ -121,14 +112,13 @@ const apiServices = {
         headers: {
           'Content-Type':
             type === 'file' ? '/' : type === 'm' ? 'multipart/form-data' : 'application/json',
-          // Authorization: getAuthorization(),
         },
         responseType: responseType || 'json',
       };
       if (controller) {
         options.signal = controller?.signal;
       }
-      const response = await apiInstance.put(apiUrl, body, options);
+      const response = await http.put(apiUrl, body, options);
       handleErrors({ response, apiDispatch, callBackFunction });
     } catch (e) {
       const errorData = e.response?.data || {

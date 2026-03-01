@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     envPrefix: 'APP_',
     server: {
+      host: true,
       port: 8080,
     },
 
