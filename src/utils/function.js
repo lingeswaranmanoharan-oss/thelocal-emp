@@ -98,3 +98,13 @@ export const apiReducer = (state = initialState, action) => {
       };
   }
 };
+
+export const formatAmountToFixed = (val) => {
+  const num = Number(val);
+  return val == null ? '' : num.toFixed(2);
+};
+
+export const formatLabelWithSpaces = (string) => {
+  if (!string) return '';
+  return string.replace(/[_-]+/g, ' ').trim();
+};

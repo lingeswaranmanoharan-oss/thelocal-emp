@@ -9,6 +9,7 @@ import Employee from '../pages/employee/employee';
 import EmployeeProfile from '../pages/profile/employee-profile/EmployeeProfile';
 import { ResetPasswordPage } from '../pages/auth/ResetPasswordPage';
 import HolidaysPage from '../pages/holidays/HolidaysPage';
+import GeneratePayslipPage from '../pages/profile/GeneratePayslipPage';
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,16 @@ export const router = createBrowserRouter([
       {
         path: '',
         element: <Employee />,
+      },
+    ],
+  },
+  {
+    path: '/payslip',
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: '',
+        element: <GeneratePayslipPage />,
       },
     ],
   },

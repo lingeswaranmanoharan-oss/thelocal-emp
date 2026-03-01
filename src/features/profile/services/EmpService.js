@@ -23,3 +23,7 @@ export const addEmployeeSalary = async (data) => {
   });
   return response;
 };
+export const getGeneratePayslip = async({companyId, employeeId, month, year}) => {
+  const response = await HttpService.get(apiEndPoints.generatePayslip(companyId, employeeId, month, year));
+  return response;
+}

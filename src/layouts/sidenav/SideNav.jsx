@@ -7,7 +7,10 @@ const menuConfig = [
     key: 'employee',
     label: 'Profile',
     icon: 'streamline-ultimate:human-resources-search-employees-bold',
-    children: [{ label: 'My Details', path: '/My-details' }],
+    children: [
+      { label: 'My Details', path: '/My-details' },
+      { label: 'Payslip', path: '/payslip' }
+    ],
   },
   {
     key:'holidays',
@@ -42,13 +45,13 @@ const SideNav = ({ isMobileMenuOpen, setIsMobileMenuOpen, empData }) => {
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="print-hide fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r transform transition-transform duration-300 ${
+        className={`print-hide fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r transform transition-transform duration-300 ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
